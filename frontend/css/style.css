@@ -148,6 +148,20 @@ input {
   flex-shrink: 0;
 }
 
+/* ── Logo Image ────────────────────────────────────────────────────── */
+.logo-img {
+  height: 40px;
+  width: auto;
+  display: inline-block;
+  border-radius: 6px;
+  transition: filter 0.3s ease, transform 0.3s ease;
+}
+
+.logo-img:hover {
+  filter: drop-shadow(0 0 8px rgba(167, 139, 250, 0.5));
+  transform: scale(1.08);
+}
+
 /* ── Nav ────────────────────────────────────────────────────────────── */
 .nav {
   position: fixed;

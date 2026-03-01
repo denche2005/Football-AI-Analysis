@@ -7,9 +7,8 @@
   <title>FootballAI — Match Analysis Pipeline</title>
   <meta name="description"
     content="Upload any football video and get AI-powered insights — player tracking, team detection, speed & distance, ball possession.">
-  <link rel="stylesheet" href="css/style.css?v=2">
-  <link rel="icon"
-    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='85'>⚽</text></svg>">
+  <link rel="stylesheet" href="css/style.css?v=5">
+  <link rel="icon" href="/assets/favicon.ico">
 </head>
 
 <body>
@@ -52,8 +51,7 @@
   <!-- ═══ Nav ═══ -->
   <nav class="nav" id="nav">
     <div class="nav__logo">
-      <div class="logo-icon">FA</div>
-      <span>Football<span class="text-gradient">AI</span></span>
+      <img src="assets/logo.png" alt="FootballAI Logo" class="logo-img" style="height: 48px;">
     </div>
     <ul class="nav__links">
       <li><a href="#pipeline">Pipeline</a></li>
@@ -150,7 +148,8 @@
   <div class="section-sep"></div>
   <section id="pipeline">
     <div class="section-label glass reveal"><span class="dot"></span> Processing Pipeline</div>
-    <h2 class="section-title reveal">Six CV modules in a <span class="text-gradient">sequential pipeline</span></h2>
+    <h2 class="section-title reveal">Six Computer Vision modules in a <span class="text-gradient">sequential
+        pipeline</span></h2>
     <p class="section-desc reveal">Each frame passes through detection, tracking, and analysis to produce per-player
       statistics and an annotated video.</p>
 
@@ -323,10 +322,8 @@
       <div class="output-card glass reveal">
         <div class="output-card__icon" style="background:var(--purple-dim); color:var(--purple)">
           <svg class="icon" viewBox="0 0 24 24">
-            <rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18" />
-            <line x1="7" y1="2" x2="7" y2="22" />
-            <line x1="17" y1="2" x2="17" y2="22" />
-            <line x1="2" y1="12" x2="22" y2="12" />
+            <polygon points="23 7 16 12 23 17 23 7" />
+            <rect x="1" y="5" width="15" height="14" rx="2" ry="2" />
           </svg>
         </div>
         <div class="output-card__title">Annotated Video</div>
@@ -336,8 +333,8 @@
       <div class="output-card glass reveal">
         <div class="output-card__icon" style="background:var(--cyan-dim); color:var(--cyan)">
           <svg class="icon" viewBox="0 0 24 24">
-            <circle cx="12" cy="12" r="10" />
-            <circle cx="12" cy="12" r="3" />
+            <path d="M21.21 15.89A10 10 0 1 1 8 2.83" />
+            <path d="M22 12A10 10 0 0 0 12 2v10z" />
           </svg>
         </div>
         <div class="output-card__title">Ball Possession %</div>
@@ -347,8 +344,10 @@
       <div class="output-card glass reveal">
         <div class="output-card__icon" style="background:rgba(236,72,153,0.15); color:var(--pink)">
           <svg class="icon" viewBox="0 0 24 24">
-            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-            <circle cx="12" cy="7" r="4" />
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+            <circle cx="9" cy="7" r="4" />
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
           </svg>
         </div>
         <div class="output-card__title">Per-Player Stats</div>
@@ -363,8 +362,8 @@
   <section id="demo">
     <div class="section-label glass reveal"><span class="dot"></span> Live Demo</div>
     <h2 class="section-title reveal">Analyse your <span class="text-gradient">video</span></h2>
-    <p class="section-desc reveal">Upload a football match clip (MP4, AVI, MOV). Processing time depends on video length
-      and hardware.</p>
+    <p class="section-desc reveal">Upload a football match clip. Each frame passes through detection, tracking, and
+      analysis to produce per-player statistics and an annotated video.</p>
 
     <div class="demo-layout">
       <!-- Left: Upload + Controls -->
@@ -452,11 +451,11 @@
 
   <!-- ═══ Footer ═══ -->
   <footer class="footer">
-    <p>Built with YOLOv8, OpenCV & FastAPI — <a href="https://github.com/denche2005?tab=repositories"
-        target="_blank">Football AI Project</a> by Denys</p>
+    <p>Built with YOLOv8, OpenCV & FastAPI — <a href="https://github.com/denche2005/Football-AI-Analysis"
+        target="_blank">Football AI Project</a> by Denys Cherednychenko</p>
   </footer>
 
-  <script src="js/main.js?v=2"></script>
+  <script src="js/main.js?v=3"></script>
 </body>
 
 </html>

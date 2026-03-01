@@ -43,13 +43,14 @@
   const RING_CIRCUMFERENCE = 2 * Math.PI * 80; // r=80 in the SVG
 
   // ═══════════════════════════════════════════════════════════════════════
-  // 1. CUSTOM CURSOR — canvas comet trail + click explosions
+  // 1. CUSTOM CURSOR — thick glowing comet + sparkles + constellations
   // ═══════════════════════════════════════════════════════════════════════
   const canvas = EL.canvas;
   const ctx = canvas ? canvas.getContext('2d') : null;
   const mouse = { x: 0, y: 0 };
   const trail = [];
   const particles = [];
+  const sparkles = [];      // floating dots that drift off the trail
   const isMobile = window.matchMedia('(max-width: 768px)').matches;
 
   function resizeCanvas() {
@@ -61,77 +62,166 @@
   window.addEventListener('resize', resizeCanvas);
 
   if (!isMobile && ctx) {
+    let frameCount = 0;
+
     window.addEventListener('mousemove', e => {
       mouse.x = e.clientX;
       mouse.y = e.clientY;
       trail.push({ x: e.clientX, y: e.clientY, age: 0 });
-      if (trail.length > 50) trail.shift();
-    });
+      if (trail.length > 60) trail.shift();
 
-    window.addEventListener('mousedown', e => {
-      // Click explosion
-      const colors = ['#a78bfa', '#06b6d4', '#ec4899', '#8b5cf6', '#22d3ee'];
-      for (let i = 0; i < 14; i++) {
-        const angle = (Math.PI * 2 * i) / 14;
-        const speed = 3 + Math.random() * 4;
-        particles.push({
-          x: e.clientX, y: e.clientY,
-          vx: Math.cos(angle) * speed,
-          vy: Math.sin(angle) * speed,
-          life: 1, size: 3 + Math.random() * 4,
-          color: colors[Math.floor(Math.random() * colors.length)],
+      // Spawn sparkles along the trail every few frames
+      frameCount++;
+      if (frameCount % 3 === 0) {
+        const angle = Math.random() * Math.PI * 2;
+        const drift = 0.3 + Math.random() * 0.8;
+        sparkles.push({
+          x: e.clientX + (Math.random() - 0.5) * 10,
+          y: e.clientY + (Math.random() - 0.5) * 10,
+          vx: Math.cos(angle) * drift,
+          vy: Math.sin(angle) * drift,
+          life: 1,
+          size: 1.5 + Math.random() * 2.5,
+          hue: 250 + Math.random() * 130, // purple→cyan→pink range
         });
       }
     });
 
+    window.addEventListener('mousedown', e => {
+      const colors = ['#a78bfa', '#06b6d4', '#ec4899', '#8b5cf6', '#22d3ee', '#f472b6'];
+      // Burst ring
+      for (let i = 0; i < 18; i++) {
+        const angle = (Math.PI * 2 * i) / 18;
+        const speed = 4 + Math.random() * 5;
+        particles.push({
+          x: e.clientX, y: e.clientY,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed,
+          life: 1, size: 3 + Math.random() * 5,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          type: 'ring',
+        });
+      }
+      // Inner sparks
+      for (let i = 0; i < 8; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const speed = 1 + Math.random() * 2;
+        particles.push({
+          x: e.clientX, y: e.clientY,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed - 2,
+          life: 1, size: 1.5 + Math.random() * 2,
+          color: '#ffffff',
+          type: 'spark',
+        });
+      }
+    });
+
+    function drawTrailPath() {
+      if (trail.length < 3) return;
+      ctx.beginPath();
+      ctx.moveTo(trail[0].x, trail[0].y);
+      for (let i = 1; i < trail.length; i++) {
+        const p = trail[i], pp = trail[i - 1];
+        ctx.quadraticCurveTo(pp.x, pp.y, (pp.x + p.x) / 2, (pp.y + p.y) / 2);
+      }
+    }
+
     function drawCursor() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // Draw comet trail
-      const alive = trail.filter(p => { p.age++; return p.age < 30; });
+      // Age trail
+      const alive = trail.filter(p => { p.age++; return p.age < 40; });
       trail.length = 0;
       trail.push(...alive);
 
-      if (trail.length > 2) {
-        // Glow
-        ctx.beginPath();
-        ctx.moveTo(trail[0].x, trail[0].y);
-        for (let i = 1; i < trail.length; i++) {
-          const p = trail[i], pp = trail[i - 1];
-          ctx.quadraticCurveTo(pp.x, pp.y, (pp.x + p.x) / 2, (pp.y + p.y) / 2);
-        }
-        ctx.strokeStyle = 'rgba(167, 139, 250, 0.08)';
-        ctx.lineWidth = 10;
-        ctx.lineCap = 'round';
+      if (trail.length > 3) {
+        // Layer 1 — Wide outer glow
+        drawTrailPath();
+        ctx.strokeStyle = 'rgba(139, 92, 246, 0.04)';
+        ctx.lineWidth = 28;
+        ctx.lineCap = 'round'; ctx.lineJoin = 'round';
         ctx.stroke();
 
-        // Main
-        ctx.beginPath();
-        ctx.moveTo(trail[0].x, trail[0].y);
-        for (let i = 1; i < trail.length; i++) {
-          const p = trail[i], pp = trail[i - 1];
-          ctx.quadraticCurveTo(pp.x, pp.y, (pp.x + p.x) / 2, (pp.y + p.y) / 2);
-        }
-        const grad = ctx.createLinearGradient(trail[0].x, trail[0].y, trail[trail.length - 1].x, trail[trail.length - 1].y);
-        grad.addColorStop(0, 'rgba(167, 139, 250, 0)');
-        grad.addColorStop(0.5, 'rgba(6, 182, 212, 0.5)');
-        grad.addColorStop(1, 'rgba(236, 72, 153, 0.7)');
-        ctx.strokeStyle = grad;
-        ctx.lineWidth = 3;
+        // Layer 2 — Medium glow
+        drawTrailPath();
+        ctx.strokeStyle = 'rgba(6, 182, 212, 0.08)';
+        ctx.lineWidth = 14;
         ctx.stroke();
+
+        // Layer 3 — Bright core with gradient
+        drawTrailPath();
+        const grad = ctx.createLinearGradient(
+          trail[0].x, trail[0].y,
+          trail[trail.length - 1].x, trail[trail.length - 1].y
+        );
+        grad.addColorStop(0, 'rgba(167, 139, 250, 0)');
+        grad.addColorStop(0.3, 'rgba(139, 92, 246, 0.4)');
+        grad.addColorStop(0.6, 'rgba(6, 182, 212, 0.6)');
+        grad.addColorStop(1, 'rgba(236, 72, 153, 0.8)');
+        ctx.strokeStyle = grad;
+        ctx.lineWidth = 4;
+        ctx.stroke();
+
+        // Cursor dot
+        const last = trail[trail.length - 1];
+        ctx.beginPath();
+        ctx.arc(last.x, last.y, 5, 0, Math.PI * 2);
+        const dotGrad = ctx.createRadialGradient(last.x, last.y, 0, last.x, last.y, 5);
+        dotGrad.addColorStop(0, 'rgba(255, 255, 255, 0.9)');
+        dotGrad.addColorStop(1, 'rgba(167, 139, 250, 0)');
+        ctx.fillStyle = dotGrad;
+        ctx.fill();
       }
 
-      // Draw particles
+      // Draw sparkles + constellation lines between nearby sparkles
+      for (let i = sparkles.length - 1; i >= 0; i--) {
+        const s = sparkles[i];
+        s.x += s.vx; s.y += s.vy;
+        s.life -= 0.012;
+        if (s.life <= 0) { sparkles.splice(i, 1); continue; }
+
+        // Sparkle dot
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.size * s.life, 0, Math.PI * 2);
+        ctx.fillStyle = `hsla(${s.hue}, 80%, 70%, ${s.life * 0.6})`;
+        ctx.fill();
+
+        // Constellation lines to nearby sparkles
+        for (let j = i - 1; j >= Math.max(0, i - 6); j--) {
+          const s2 = sparkles[j];
+          const dx = s.x - s2.x, dy = s.y - s2.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 80) {
+            ctx.beginPath();
+            ctx.moveTo(s.x, s.y);
+            ctx.lineTo(s2.x, s2.y);
+            ctx.strokeStyle = `hsla(${(s.hue + s2.hue) / 2}, 60%, 60%, ${(1 - dist / 80) * s.life * 0.15})`;
+            ctx.lineWidth = 0.5;
+            ctx.stroke();
+          }
+        }
+      }
+
+      // Draw click particles
       for (let i = particles.length - 1; i >= 0; i--) {
         const p = particles[i];
         p.x += p.vx; p.y += p.vy;
-        p.vy += 0.12; p.vx *= 0.97; p.vy *= 0.97;
-        p.life -= 0.025;
+        p.vy += (p.type === 'spark' ? 0.08 : 0.15);
+        p.vx *= 0.96; p.vy *= 0.96;
+        p.life -= (p.type === 'spark' ? 0.03 : 0.02);
         if (p.life <= 0) { particles.splice(i, 1); continue; }
 
         ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size * p.life, 0, Math.PI * 2);
-        ctx.fillStyle = p.color + Math.floor(p.life * 200).toString(16).padStart(2, '0');
+        if (p.type === 'spark') {
+          // Tiny bright sparks
+          ctx.arc(p.x, p.y, p.size * p.life, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(255,255,255,${p.life})`;
+        } else {
+          // Ring particles with glow
+          ctx.arc(p.x, p.y, p.size * p.life, 0, Math.PI * 2);
+          ctx.fillStyle = p.color + Math.floor(p.life * 220).toString(16).padStart(2, '0');
+        }
         ctx.fill();
       }
 

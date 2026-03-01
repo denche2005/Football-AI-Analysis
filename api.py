@@ -26,6 +26,7 @@ import numpy as np
 from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, JSONResponse, StreamingResponse
+from fastapi.staticfiles import StaticFiles
 
 
 class NumpyEncoder(json.JSONEncoder):
@@ -74,6 +75,16 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# ── Serve the frontend ─────────────────────────────────────────────────────
+FRONTEND_DIR = _BASE / "frontend"
+if FRONTEND_DIR.exists():
+    app.mount("/css", StaticFiles(directory=str(FRONTEND_DIR / "css")), name="css")
+    app.mount("/js", StaticFiles(directory=str(FRONTEND_DIR / "js")), name="js")
+
+    @app.get("/")
+    def serve_index():
+        return FileResponse(str(FRONTEND_DIR / "index.html"), media_type="text/html")
 
 # ── Job state (in-memory, per-process) ─────────────────────────────────────
 # Each job has: status, progress dict, stats, error

@@ -1,0 +1,53 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+env/
+
+# Models (too large for git — download separately)
+models/*.pt
+
+# Video files
+input_videos/
+output_videos/
+
+# Cache / stubs
+stubs/*.pkl
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Env
+.env
+.env.local
+
+# SpaceX reference template (cloned for design reference only)
+spacex_ref/
+spacex-template-ref/
+
+# YOLO runs
+runs/
+
+# Jupyter notebooks (large, development only)
+development_and_analysis/
+training/
+
+# Node
+node_modules/
+
+# Large pre-trained weights
+yolov8x.pt

@@ -27,6 +27,18 @@ from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, JSONResponse, StreamingResponse
 
+
+class NumpyEncoder(json.JSONEncoder):
+    """Handle NumPy types that the default encoder can't serialize."""
+    def default(self, obj):
+        if isinstance(obj, (np.integer,)):
+            return int(obj)
+        if isinstance(obj, (np.floating,)):
+            return float(obj)
+        if isinstance(obj, np.ndarray):
+            return obj.tolist()
+        return super().default(obj)
+
 # ── make sure local modules are importable ─────────────────────────────────
 sys.path.insert(0, str(Path(__file__).parent))
 
@@ -309,7 +321,7 @@ async def progress_stream(job_id: str):
 
             # Only send when something changed
             if current_pct != last_pct:
-                data = json.dumps(prog)
+                data = json.dumps(prog, cls=NumpyEncoder)
                 yield f"data: {data}\n\n"
                 last_pct = current_pct
 
@@ -325,7 +337,7 @@ async def progress_stream(job_id: str):
                     }
                 else:
                     final = {"step": "error", "pct": 0, "detail": job.get("error", "Unknown error")}
-                yield f"data: {json.dumps(final)}\n\n"
+                yield f"data: {json.dumps(final, cls=NumpyEncoder)}\n\n"
                 break
 
             import asyncio

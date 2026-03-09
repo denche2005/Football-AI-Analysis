@@ -37,6 +37,16 @@
     statsBody: $('#statsTableBody'),
     downloadBtn: $('#downloadBtn'),
     carouselTrack: $('#carouselTrack'),
+    // Comparison slider
+    comparison: $('#comparison'),
+    compOverlay: $('#compOverlay'),
+    compSlider: $('#compSlider'),
+    videoBefore: $('#videoBefore'),
+    videoAfter: $('#videoAfter'),
+    playCompare: $('#playCompare'),
+    // Error modal
+    errorModal: $('#errorModal'),
+    errorModalClose: $('#errorModalClose'),
   };
 
   let selectedFile = null;
@@ -338,7 +348,7 @@
         showLoader();
         streamProgress(base, job_id);
       } catch (err) {
-        alert('Analysis failed: ' + err.message);
+        showErrorModal();
         EL.analyzeBtn.disabled = false;
         EL.analyzeBtnTxt.textContent = 'Run Analysis';
       }
@@ -462,6 +472,66 @@
       EL.downloadBtn.classList.remove('hidden');
       EL.downloadBtn.setAttribute('download', `football_analysis_${jobId}.avi`);
     }
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════
+  // 8. ERROR MODAL — replaces browser alert()
+  // ═══════════════════════════════════════════════════════════════════════
+  function showErrorModal() {
+    if (EL.errorModal) EL.errorModal.classList.remove('hidden');
+  }
+  function hideErrorModal() {
+    if (EL.errorModal) EL.errorModal.classList.add('hidden');
+  }
+  if (EL.errorModalClose) EL.errorModalClose.addEventListener('click', hideErrorModal);
+  if (EL.errorModal) EL.errorModal.addEventListener('click', e => {
+    if (e.target === EL.errorModal) hideErrorModal();
+  });
+
+  // ═══════════════════════════════════════════════════════════════════════
+  // 9. BEFORE/AFTER COMPARISON SLIDER
+  // ═══════════════════════════════════════════════════════════════════════
+  if (EL.comparison) {
+    let isDragging = false;
+
+    function updateSlider(x) {
+      const rect = EL.comparison.getBoundingClientRect();
+      let pct = ((x - rect.left) / rect.width) * 100;
+      pct = Math.max(2, Math.min(98, pct));
+      EL.compOverlay.style.clipPath = `inset(0 ${100 - pct}% 0 0)`;
+      EL.compSlider.style.left = pct + '%';
+    }
+
+    EL.comparison.addEventListener('mousedown', e => { isDragging = true; updateSlider(e.clientX); });
+    window.addEventListener('mousemove', e => { if (isDragging) updateSlider(e.clientX); });
+    window.addEventListener('mouseup', () => { isDragging = false; });
+
+    // Touch support
+    EL.comparison.addEventListener('touchstart', e => { isDragging = true; updateSlider(e.touches[0].clientX); }, { passive: true });
+    window.addEventListener('touchmove', e => { if (isDragging) updateSlider(e.touches[0].clientX); }, { passive: true });
+    window.addEventListener('touchend', () => { isDragging = false; });
+  }
+
+  // Play/pause button for comparison videos
+  if (EL.playCompare && EL.videoBefore && EL.videoAfter) {
+    let playing = false;
+    EL.playCompare.addEventListener('click', () => {
+      if (!playing) {
+        EL.videoBefore.play();
+        EL.videoAfter.play();
+        EL.playCompare.innerHTML = '<svg class="icon" viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg> Pause';
+      } else {
+        EL.videoBefore.pause();
+        EL.videoAfter.pause();
+        EL.playCompare.innerHTML = '<svg class="icon" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg> Play Comparison';
+      }
+      playing = !playing;
+    });
+
+    // Sync videos on seek
+    EL.videoBefore.addEventListener('seeked', () => {
+      EL.videoAfter.currentTime = EL.videoBefore.currentTime;
+    });
   }
 
 })();

@@ -1251,3 +1251,243 @@ section {
   animation: spin 0.6s linear infinite;
   display: inline-block;
 }
+
+/* ── Before/After Comparison Slider ─────────────────────────────────── */
+.comparison {
+  position: relative;
+  width: 100%;
+  max-width: 900px;
+  margin: 2rem auto;
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 1px solid var(--border);
+  aspect-ratio: 16 / 9;
+  cursor: col-resize;
+  user-select: none;
+  background: #000;
+}
+
+.comparison__video-wrap {
+  position: absolute;
+  inset: 0;
+}
+
+.comparison__video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.comparison__overlay {
+  position: absolute;
+  inset: 0;
+  clip-path: inset(0 50% 0 0);
+  overflow: hidden;
+}
+
+.comparison__overlay .comparison__video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.comparison__slider {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 4px;
+  background: rgba(255, 255, 255, 0.8);
+  cursor: col-resize;
+  z-index: 10;
+  transform: translateX(-50%);
+}
+
+.comparison__handle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(167, 139, 250, 0.9);
+  border: 2px solid #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  color: #fff;
+  box-shadow: 0 0 20px rgba(167, 139, 250, 0.5);
+  transition: box-shadow 0.3s;
+}
+
+.comparison__handle:hover {
+  box-shadow: 0 0 30px rgba(167, 139, 250, 0.8);
+}
+
+.comparison__label {
+  position: absolute;
+  bottom: 12px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  z-index: 5;
+  pointer-events: none;
+}
+
+.comparison__label--before {
+  left: 12px;
+  background: rgba(167, 139, 250, 0.8);
+  color: #fff;
+}
+
+.comparison__label--after {
+  right: 12px;
+  background: rgba(6, 182, 212, 0.8);
+  color: #fff;
+}
+
+.btn-play-compare {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 1.5rem auto;
+  padding: 12px 28px;
+  border-radius: 99px;
+  background: linear-gradient(135deg, var(--purple), var(--cyan));
+  color: #fff;
+  font-family: var(--font-head);
+  font-weight: 600;
+  font-size: 1rem;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.3s;
+}
+
+.btn-play-compare:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 25px rgba(167, 139, 250, 0.4);
+}
+
+.btn-play-compare .icon {
+  width: 1.2em;
+  height: 1.2em;
+}
+
+/* ── Error Modal ────────────────────────────────────────────────────── */
+.error-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+  animation: fadeIn 0.3s ease;
+}
+
+.error-modal__card {
+  position: relative;
+  max-width: 560px;
+  width: 90%;
+  padding: 2.5rem;
+  border-radius: var(--radius);
+  text-align: center;
+}
+
+.error-modal__close {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  font-size: 1.8rem;
+  color: var(--gray-400);
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.error-modal__close:hover {
+  color: var(--pink);
+}
+
+.error-modal__icon {
+  margin-bottom: 1rem;
+}
+
+.error-modal__title {
+  font-family: var(--font-head);
+  color: var(--white);
+  font-size: 1.4rem;
+  margin-bottom: 0.75rem;
+}
+
+.error-modal__text {
+  color: var(--gray-300);
+  font-size: 0.9rem;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+
+.error-modal__steps {
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 1.5rem;
+}
+
+.error-modal__step {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  font-size: 0.85rem;
+  color: var(--gray-300);
+  line-height: 1.5;
+}
+
+.error-modal__step code {
+  background: rgba(167, 139, 250, 0.1);
+  color: var(--purple);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  word-break: break-all;
+}
+
+.error-modal__num {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--purple-dim);
+  color: var(--purple);
+  font-weight: 700;
+  font-size: 0.8rem;
+}
+
+.error-modal__hint {
+  color: var(--gray-400);
+  font-size: 0.85rem;
+  font-style: italic;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}

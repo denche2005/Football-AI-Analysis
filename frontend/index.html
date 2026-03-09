@@ -357,13 +357,78 @@
     </div>
   </section>
 
-  <!-- ═══ Demo ═══ -->
+  <!-- ═══ Before / After Comparison ═══ -->
   <div class="section-sep"></div>
   <section id="demo">
-    <div class="section-label glass reveal"><span class="dot"></span> Live Demo</div>
+    <div class="section-label glass reveal"><span class="dot"></span> See It In Action</div>
+    <h2 class="section-title reveal">Before <span class="text-gradient">& After</span></h2>
+    <p class="section-desc reveal">Drag the slider to compare the raw input footage with the AI-annotated output.</p>
+
+    <div class="comparison reveal" id="comparison">
+      <div class="comparison__video-wrap">
+        <video class="comparison__video" id="videoAfter" src="assets/demo_output.mp4" muted loop playsinline></video>
+      </div>
+      <div class="comparison__overlay" id="compOverlay">
+        <video class="comparison__video" id="videoBefore" src="assets/demo_input.mp4" muted loop playsinline></video>
+      </div>
+      <div class="comparison__slider" id="compSlider">
+        <div class="comparison__handle">
+          <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="15 18 9 12 15 6" />
+          </svg>
+          <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="9 18 15 12 9 6" />
+          </svg>
+        </div>
+      </div>
+      <div class="comparison__label comparison__label--before">Original</div>
+      <div class="comparison__label comparison__label--after">AI Output</div>
+    </div>
+
+    <button class="btn-play-compare" id="playCompare">
+      <svg class="icon" viewBox="0 0 24 24">
+        <polygon points="5 3 19 12 5 21 5 3" />
+      </svg>
+      Play Comparison
+    </button>
+  </section>
+
+  <!-- ═══ Try It Yourself ═══ -->
+  <div class="section-sep"></div>
+  <section id="tryit">
+    <div class="section-label glass reveal"><span class="dot"></span> Try It Yourself</div>
     <h2 class="section-title reveal">Analyse your <span class="text-gradient">video</span></h2>
     <p class="section-desc reveal">Upload a football match clip. Each frame passes through detection, tracking, and
       analysis to produce per-player statistics and an annotated video.</p>
+
+    <!-- ═══ Error Modal (replaces browser alert) ═══ -->
+    <div class="error-modal hidden" id="errorModal">
+      <div class="error-modal__card glass">
+        <button class="error-modal__close" id="errorModalClose">&times;</button>
+        <div class="error-modal__icon">
+          <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="var(--pink)" stroke-width="2">
+            <circle cx="12" cy="12" r="10" />
+            <line x1="12" y1="8" x2="12" y2="12" />
+            <line x1="12" y1="16" x2="12.01" y2="16" />
+          </svg>
+        </div>
+        <h3 class="error-modal__title">Backend Server Not Running</h3>
+        <p class="error-modal__text">This analysis requires a Python backend running on your computer. The deployed
+          website is a portfolio demo — to run real analysis, follow these steps:</p>
+        <div class="error-modal__steps">
+          <div class="error-modal__step"><span class="error-modal__num">1</span>Clone the repo:
+            <code>git clone https://github.com/denche2005/Football-AI-Analysis.git</code></div>
+          <div class="error-modal__step"><span class="error-modal__num">2</span>Install dependencies:
+            <code>pip install -r requirements.txt</code></div>
+          <div class="error-modal__step"><span class="error-modal__num">3</span>Start the server:
+            <code>uvicorn api:app --host 127.0.0.1 --port 8000</code></div>
+          <div class="error-modal__step"><span class="error-modal__num">4</span>Open <code>http://127.0.0.1:8000</code>
+            in your browser and upload a video!</div>
+        </div>
+        <p class="error-modal__hint">💡 Check out the Before & After comparison above to see what the output looks like.
+        </p>
+      </div>
+    </div>
 
     <div class="demo-layout">
       <!-- Left: Upload + Controls -->
